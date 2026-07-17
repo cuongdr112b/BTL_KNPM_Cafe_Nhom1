@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Demo Hệ Thống Quản Lý Cafe - Nhóm 1 - Lớp 524107D</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-slate-100 font-sans text-slate-800">
+
+    <!-- PHẦN 1: MÀN HÌNH ĐĂNG NHẬP (LOGIN SCREEN) -->
+    <div id="login-screen" class="fixed inset-0 bg-slate-900 flex items-center justify-center z-50 p-4 transition-all duration-500">
+        <div class="absolute inset-0 opacity-20 bg-[radial-gradient(#4f46e5_1px,transparent_1px)] [background-size:16px_1px]"></div>
+        
+        <div class="bg-white p-8 rounded-2xl shadow-2xl max-w-md w-full relative z-10 border border-slate-100">
+            <div class="text-center mb-6">
+                <div class="w-16 h-16 bg-indigo-600 rounded-2xl flex items-center justify-center text-white text-3xl mx-auto shadow-md shadow-indigo-200 mb-3">
+                    <i class="fa-solid fa-mug-hot"></i>
+                </div>
+                <h2 class="text-2xl font-black text-slate-800 tracking-tight">COFFEE TECH - POS SYSTEM</h2>
+                <p class="text-xs text-slate-400 mt-1">Bài tập lớn Kỹ nghệ phần mềm | Nhóm 1 - Lớp 524107D[cite: 7]</p>
+            </div>
+
+            <div id="login-error" class="hidden bg-rose-50 border border-rose-200 text-rose-600 text-sm px-4 py-3 rounded-xl flex items-center gap-2 mb-4">
+                <i class="fa-solid fa-circle-exclamation text-base"></i>
+                <span id="error-message">Tài khoản hoặc mật khẩu không chính xác![cite: 6]</span>
+            </div>
+
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Tài khoản nhân viên:</label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400"><i class="fa-solid fa-user"></i></span>
+                        <input type="text" id="username" placeholder="Nhập thungan01..." class="w-full border p-3 pl-10 rounded-xl font-medium outline-none focus:ring-2 focus:ring-indigo-500 bg-slate-50">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Mật khẩu hệ thống:</label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400"><i class="fa-solid fa-lock"></i></span>
+                        <input type="password" id="password" placeholder="Nhập Cfe123456..." class="w-full border p-3 pl-10 rounded-xl font-medium outline-none focus:ring-2 focus:ring-indigo-500 bg-slate-50">
+                    </div>
+                </div>
+                <div class="pt-2">
+                    <button onclick="handleLogin()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3.5 rounded-xl shadow-lg shadow-indigo-200 transition duration-200 flex items-center justify-center gap-2 text-sm">
+                        <i class="fa-solid fa-right-to-bracket"></i> ĐĂNG NHẬP HỆ THỐNG
+                    </button>
+                </div>
+            </div>
+            <div class="text-center mt-6 text-xs text-slate-400 border-t pt-4">
+                Trường Đại học Phương Đông | Khoa CNTT&TT[cite: 7]
+            </div>
+        </div>
+    </div>
+
+    <!-- PHẦN 2: GIAO DIỆN CHÍNH SAU KHI ĐĂNG NHẬP -->
+    <div id="main-app" class="hidden opacity-0 transition-all duration-500">
+        <!-- HEADER -->
+        <header class="bg-indigo-700 text-white shadow-md px-6 py-4 flex flex-col md:flex-row justify-between items-center gap-4">
+            <div>
+                <h1 class="text-xl font-bold tracking-wide"><i class="fa-solid fa-mug-hot mr-2"></i>COFFEE TECH - HỆ THỐNG POS CAFE</h1>
+                <p class="text-xs text-indigo-200 mt-1">Bài tập lớn Kỹ nghệ phần mềm | Nhóm 1 - Lớp 524107D | Đại học Phương Đông[cite: 7]</p>
+            </div>
+            <div class="flex items-center gap-4 text-sm bg-indigo-800 px-4 py-2 rounded-lg">
+                <span><i class="fa-solid fa-user mr-1 text-indigo-300"></i> Nhân viên: <strong>Nguyễn Mạnh Cường</strong></span>
+                <span class="border-l border-indigo-600 pl-4 text-indigo-300">Vai trò: <strong>Thu ngân / Admin</strong></span>
+            </div>
+        </header>
+
+        <!-- MAIN BODY -->
+        <main class="max-w-7xl mx-auto p-4 md:p-6 grid grid-cols-1 lg:grid-cols-12 gap-6">
+            <!-- SIDEBAR CHUYỂN PHÂN HỆ -->
+            <section class="lg:col-span-3 bg-white p-4 rounded-xl shadow-sm flex flex-row lg:flex-col gap-2 overflow-x-auto">
+                <button onclick="switchTab('tab-sodo')" id="btn-sodo" class="tab-btn w-full flex items-center justify-center lg:justify-start gap-3 px-4 py-3 rounded-lg text-sm font-semibold bg-indigo-50 text-indigo-700">
+                    <i class="fa-solid fa-table-cells-large text-lg"></i> <span>1. Sơ đồ bàn</span>
+                </button>
+                <button onclick="switchTab('tab-order')" id="btn-order" class="tab-btn w-full flex items-center justify-center lg:justify-start gap-3 px-4 py-3 rounded-lg text-sm font-semibold text-slate-600 hover:bg-slate-50">
+                    <i class="fa-solid fa-cart-plus text-lg"></i> <span>2. Gọi món (Order)</span>
+                </button>
+                <button onclick="switchTab('tab-bep')" id="btn-bep" class="tab-btn w-full flex items-center justify-center lg:justify-start gap-3 px-4 py-3 rounded-lg text-sm font-semibold text-slate-600 hover:bg-slate-50 flex justify-between">
+                    <span class="flex items-center gap-3"><i class="fa-solid fa-fire text-lg"></i> <span>3. Bếp/Bar</span></span>
+                    <span id="badge-bep" class="bg-red-500 text-white text-xs px-2 py-0.5 rounded-full hidden">0</span>
+                </button>
+                <button onclick="switchTab('tab-thungan')" id="btn-thungan" class="tab-btn w-full flex items-center justify-center lg:justify-start gap-3 px-4 py-3 rounded-lg text-sm font-semibold text-slate-600 hover:bg-slate-50">
+                    <i class="fa-solid fa-cash-register text-lg"></i> <span>4. Thu ngân</span>
+                </button>
+                <button onclick="handleLogout()" class="w-full flex items-center justify-center lg:justify-start gap-3 px-4 py-3 rounded-lg text-sm font-semibold text-rose-600 hover:bg-rose-50 border border-dashed border-rose-200 mt-2">
+                    <i class="fa-solid fa-right-from-bracket text-lg"></i> <span>Đăng xuất (Khóa máy)</span>
+                </button>
+            </section>
+
+            <!-- KHU VỰC HIỂN THỊ CHÍNH -->
+            <section class="lg:col-span-9 bg-white p-6 rounded-xl shadow-sm min-h-[500px]">
+
+                <!-- TAB 1: SƠ ĐỒ BÀN -->
+                <div id="tab-sodo" class="tab-content block">
+                    <div class="flex justify-between items-center mb-6 border-b pb-4">
+                        <h2 class="text-lg font-bold text-slate-700"><i class="fa-solid fa-circle-info mr-2 text-indigo-600"></i>Trạng thái bàn thời gian thực</h2>
+                        <div class="flex gap-4 text-xs">
+                            <span class="flex items-center gap-1.5"><span class="w-3.5 h-3.5 bg-emerald-500 rounded-full inline-block"></span>Trống</span>
+                            <span class="flex items-center gap-1.5"><span class="w-3.5 h-3.5 bg-rose-500 rounded-full inline-block"></span>Có Khách</span>
+                            <span class="flex items-center gap-1.5"><span class="w-3.5 h-3.5 bg-amber-500 rounded-full inline-block"></span>Chờ Pha Chế</span>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 md:grid-cols-3 gap-6" id="grid-ban"></div>
+                </div>
+
+                <!-- TAB 2: GỌI MÓN (ORDER) -->
+                <div id="tab-order" class="tab-content hidden">
+                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-2 mb-6 border-b pb-4">
+                        <h2 class="text-lg font-bold text-slate-700"><i class="fa-solid fa-cart-shopping mr-2 text-indigo-600"></i>Nhập order cho khách</h2>
+                        <select id="select-ban-order" class="border p-2 rounded-lg text-sm font-medium bg-slate-50 focus:ring-2 focus:ring-indigo-500 outline-none"></select>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-12 gap-6">
+                        <div class="md:col-span-7">
+                            <h3 class="text-sm font-bold text-slate-500 uppercase tracking-wider mb-4">Thực đơn đồ uống</h3>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4" id="menu-items"></div>
+                        </div>
+                        <div class="md:col-span-5 bg-slate-50 p-4 rounded-xl border">
+                            <h3 class="text-sm font-bold text-slate-500 uppercase tracking-wider mb-4 border-b pb-2"><i class="fa-solid fa-list-check mr-1 text-indigo-600"></i>Chi tiết đặt món</h3>
+                            <div id="cart-list" class="space-y-3 min-h-[150px] max-h-[300px] overflow-y-auto mb-4 text-sm">
+                                <p class="text-slate-400 text-center py-8">Chưa có món nào được chọn.</p>
+                            </div>
+                            <div class="border-t pt-3 text-sm font-bold text-slate-700 flex justify-between mb-4">
+                                <span>Tạm tính:</span>
+                                <span id="cart-total" class="text-indigo-600 text-base">0 VNĐ</span>
+                            </div>
+                            <button onclick="submitOrder()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-lg text-sm shadow-md transition duration-200">
+                                <i class="fa-solid fa-paper-plane mr-1"></i> Gửi yêu cầu xuống quầy Bar[cite: 6]
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TAB 3: QUẦY BẾP/BAR -->
+                <div id="tab-bep" class="tab-content hidden">
+                    <div class="flex justify-between items-center mb-6 border-b pb-4">
+                        <h2 class="text-lg font-bold text-slate-700"><i class="fa-solid fa-fire mr-2 text-indigo-600"></i>Danh sách pha chế xếp lớp (FIFO)[cite: 6]</h2>
+                    </div>
+                    <div id="bep-list" class="space-y-4">
+                        <p class="text-slate-400 text-center py-12">Hiện tại quầy pha chế chưa nhận được yêu cầu nào.[cite: 6]</p>
+                    </div>
+                </div>
+
+                <!-- TAB 4: THU NGÂN -->
+                <div id="tab-thungan" class="tab-content hidden">
+                    <div class="flex justify-between items-center mb-6 border-b pb-4">
+                        <h2 class="text-lg font-bold text-slate-700"><i class="fa-solid fa-cash-register mr-2 text-indigo-600"></i>Kết toán hóa đơn & in hóa đơn nhiệt[cite: 6]</h2>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-12 gap-6">
+                        <div class="md:col-span-5 bg-slate-50 p-4 rounded-xl border">
+                            <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Chọn bàn cần thanh toán:</label>
+                            <select id="select-ban-payment" onchange="loadBillDetails()" class="w-full border p-3 rounded-lg font-medium bg-white outline-none focus:ring-2 focus:ring-indigo-500 mb-4"></select>
+                            
+                            <div class="space-y-4 text-sm border-t pt-4">
+                                <div>
+                                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Mã giảm giá/Voucher:</label>
+                                    <input type="text" id="input-voucher" oninput="applyDiscount()" placeholder="Nhập KM10..." class="w-full border p-2.5 rounded-lg font-mono text-sm uppercase outline-none focus:ring-2 focus:ring-indigo-500">
+                                </div>
+                                
+                                <div>
+                                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Hình thức thanh toán:</label>
+                                    <div class="flex items-center gap-4 bg-white p-2.5 rounded-lg border">
+                                        <label class="flex items-center gap-1.5 cursor-pointer font-medium text-slate-700">
+                                            <input type="radio" name="payment-method" id="pay-cash" checked onchange="togglePaymentMethod('cash')" class="w-4 h-4 text-indigo-600 focus:ring-indigo-500"> Tiền mặt
+                                        </label>
+                                        <label class="flex items-center gap-1.5 cursor-pointer font-medium text-slate-700">
+                                            <input type="radio" name="payment-method" id="pay-qr" onchange="togglePaymentMethod('qr')" class="w-4 h-4 text-indigo-600 focus:ring-indigo-500"> Chuyển khoản QR
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <!-- Ô nhập tiền mặt (Ẩn hiện linh hoạt) -->
+                                <div id="container-tien-mat">
+                                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Tiền mặt khách đưa (VNĐ):</label>
+                                    <input type="number" id="input-tien-khach" oninput="calculateChange()" placeholder="" class="w-full border p-2.5 rounded-lg font-bold text-indigo-600 outline-none focus:ring-2 focus:ring-indigo-500">
+                                </div>
+
+                                <!-- Khung hiển thị mã QR động (Ẩn mặc định) -->
+                                <div id="container-ma-qr" class="hidden bg-white p-4 rounded-xl border border-indigo-100 flex flex-col items-center justify-center text-center shadow-sm">
+                                    <p class="text-xs font-bold text-indigo-700 mb-2"><i class="fa-solid fa-qrcode mr-1"></i> QUÉT MÃ ĐỂ CHUYỂN KHOẢN ĐẾN</p>
+                                    <p class="text-sm font-black text-slate-800 uppercase tracking-wide">NGUYEN MANH CUONG</p>
+                                    <p class="text-xs font-mono font-bold text-slate-500 bg-slate-100 px-2 py-0.5 rounded mt-1">Techcombank: 1102 2006 77</p>
+                                    
+                                    <!-- Hiển thị ảnh QR API liên kết thông tin tài khoản ngân hàng của bạn -->
+                                    <div class="w-44 h-44 border p-2 bg-white rounded-lg my-3 flex items-center justify-center shadow-sm">
+                                        <img id="img-vietqr" src="https://api.vietqr.io/image/970407-1102200677-YwDizL9.jpg?accountName=NGUYEN%20MANH%20CUONG" alt="Mã VietQR" class="w-full h-full object-contain">
+                                    </div>
+                                    <p class="text-xs text-rose-500 font-bold bg-rose-50 border border-rose-100 px-3 py-1 rounded-full">Số tiền: <span id="qr-pay-amount">0</span> VNĐ</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="md:col-span-7 bg-indigo-50/50 p-6 rounded-xl border border-indigo-100 flex flex-col justify-between">
+                            <div>
+                                <h3 class="text-sm font-bold text-indigo-800 uppercase tracking-wider mb-4 border-b border-indigo-100 pb-2"><i class="fa-solid fa-receipt mr-1"></i>Hóa đơn tạm tính[cite: 6]</h3>
+                                <div id="bill-details" class="text-sm space-y-2 mb-4">
+                                    <p class="text-slate-400 text-center py-8">Chọn bàn có khách ở bên trái để xem chi tiết hóa đơn.[cite: 6]</p>
+                                </div>
+                            </div>
+                            <button id="btn-pay-confirm" disabled onclick="processPayment()" class="w-full bg-slate-400 text-white font-bold py-3.5 rounded-lg text-sm shadow-md transition duration-200 cursor-not-allowed">
+                                <i class="fa-solid fa-print mr-1"></i> Xác nhận thanh toán & In hóa đơn[cite: 6]
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- NOTIFICATION POPUP -->
+    <div id="toast-notif" class="fixed bottom-5 right-5 bg-emerald-600 text-white px-5 py-3 rounded-xl shadow-lg flex items-center gap-3 transition-all duration-300 transform translate-y-20 opacity-0 pointer-events-none">
+        <i class="fa-solid fa-circle-check text-lg"></i>
+        <span id="toast-text" class="text-sm font-medium">Thông báo!</span>
+    </div>
+
+    <!-- JAVASCRIPT STATE ENGINE -->
+    <script>
+        function handleLogin() {
+            const userInp = document.getElementById("username").value.trim();
+            const passInp = document.getElementById("password").value.trim();
+            const errorBox = document.getElementById("login-error");
+            const errorMsg = document.getElementById("error-message");
+
+            if (userInp === "thungan01" && passInp === "Cfe123456") {
+                errorBox.classList.add("hidden");
+                showToast("Đăng nhập thành công! Chào mừng Nguyễn Mạnh Cường.");
+                const loginScreen = document.getElementById("login-screen");
+                const mainApp = document.getElementById("main-app");
+                loginScreen.classList.add("opacity-0", "pointer-events-none");
+                setTimeout(() => {
+                    loginScreen.classList.add("hidden"); mainApp.classList.remove("hidden");
+                    setTimeout(() => { mainApp.classList.remove("opacity-0"); }, 50);
+                }, 500);
+            } else {
+                errorBox.classList.remove("hidden");
+                if (userInp === "" || passInp === "") { errorMsg.innerText = "Vui lòng nhập đầy đủ tên tài khoản và mật khẩu!"; }
+                else { errorMsg.innerText = "Tài khoản hoặc mật khẩu không chính xác! (Vui lòng kiểm tra lại)"; }
+            }
+        }
+
+        function handleLogout() {
+            const loginScreen = document.getElementById("login-screen"); const mainApp = document.getElementById("main-app");
+            document.getElementById("username").value = ""; document.getElementById("password").value = "";
+            document.getElementById("login-error").classList.add("hidden");
+            mainApp.classList.add("opacity-0");
+            setTimeout(() => {
+                mainApp.classList.add("hidden"); loginScreen.classList.remove("hidden");
+                setTimeout(() => { loginScreen.classList.remove("opacity-0", "pointer-events-none"); }, 50);
+            }, 500);
+        }
+
+        const banan = [
+            { id: 1, name: "Bàn 01", status: "trong", order: [] },
+            { id: 2, name: "Bàn 02", status: "trong", order: [] },
+            { id: 3, name: "Bàn 03", status: "trong", order: [] },
+            { id: 4, name: "Bàn 04", status: "trong", order: [] },
+            { id: 5, name: "Bàn 05", status: "trong", order: [] },
+            { id: 6, name: "Bàn 06", status: "trong", order: [] }
+        ];
+
+        const thucdon = [
+            { id: 101, name: "Cà Phê Sữa Đá", price: 29000, icon: "fa-mug-hot" },
+            { id: 102, name: "Cà Phê Đen Đá", price: 25000, icon: "fa-mug-saucer" },
+            { id: 103, name: "Trà Đào Cam Sả", price: 35000, icon: "fa-whiskey-glass" },
+            { id: 104, name: "Trà Sữa Trân Châu", price: 35000, icon: "fa-glass-water" },
+            { id: 105, name: "Bánh Tiramisu", price: 40000, icon: "fa-cake-candles" }
+        ];
+
+        let giogioi = []; let bepList = []; 
+
+        window.onload = function() { renderSodo(); renderThucdon(); populateBanSelect(); };
+
+        function showToast(text) {
+            const toast = document.getElementById("toast-notif"); document.getElementById("toast-text").innerText = text;
+            toast.classList.remove("translate-y-20", "opacity-0", "pointer-events-none");
+            setTimeout(() => { toast.classList.add("translate-y-20", "opacity-0", "pointer-events-none"); }, 3000);
+        }
+
+        function switchTab(tabId) {
+            document.querySelectorAll(".tab-content").forEach(el => el.classList.add("hidden"));
+            document.getElementById(tabId).classList.remove("hidden");
+            document.querySelectorAll(".tab-btn").forEach(el => {
+                el.classList.remove("bg-indigo-50", "text-indigo-700"); el.classList.add("text-slate-600", "hover:bg-slate-50");
+            });
+            const activeBtnMap = { 'tab-sodo': 'btn-sodo', 'tab-order': 'btn-order', 'tab-bep': 'btn-bep', 'tab-thungan': 'btn-thungan' };
+            const btn = document.getElementById(activeBtnMap[tabId]);
+            btn.classList.add("bg-indigo-50", "text-indigo-700"); btn.classList.remove("text-slate-600", "hover:bg-slate-50");
+        }
+
+        function renderSodo() {
+            const grid = document.getElementById("grid-ban"); grid.innerHTML = "";
+            banan.forEach(ban => {
+                let statusColor = "bg-emerald-50 text-emerald-700 border-emerald-200"; let statusLabel = "Trống"; let statusDot = "bg-emerald-500";
+                if (ban.status === "co_khach") { statusColor = "bg-rose-50 text-rose-700 border-rose-200"; statusLabel = "Có khách"; statusDot = "bg-rose-500"; }
+                else if (ban.status === "cho_bep") { statusColor = "bg-amber-50 text-amber-700 border-amber-200"; statusLabel = "Chờ bếp"; statusDot = "bg-amber-500"; }
+                grid.innerHTML += `
+                    <div class="border rounded-2xl p-5 shadow-sm hover:shadow-md transition-all duration-200 flex flex-col justify-between h-40 ${statusColor}">
+                        <div class="flex justify-between items-start">
+                            <h3 class="font-bold text-lg">${ban.name}</h3>
+                            <span class="flex items-center gap-1 text-xs font-semibold px-2.5 py-1 bg-white/80 rounded-full border">
+                                <span class="w-2 h-2 rounded-full ${statusDot}"></span> ${statusLabel}
+                            </span>
+                        </div>
+                        <div class="text-xs text-slate-500">${ban.order.length > 0 ? `<p class="font-semibold"><i class="fa-solid fa-mug-hot"></i> Đã gọi ${ban.order.reduce((sum, item) => sum + item.quantity, 0)} món</p>` : "<p>Không hoạt động</p>"}</div>
+                        <div class="flex gap-2">
+                            <button onclick="gotoOrder(${ban.id})" class="flex-1 text-xs font-bold py-1.5 px-3 bg-white hover:bg-slate-100 border rounded-lg transition">Gọi món</button>
+                            ${ban.status !== 'trong' ? `<button onclick="gotoPay(${ban.id})" class="text-xs font-bold py-1.5 px-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition shadow-sm">Tính tiền</button>` : ''}
+                        </div>
+                    </div>`;
+            });
+        }
+
+        function populateBanSelect() {
+            const selectOrder = document.getElementById("select-ban-order"); const selectPay = document.getElementById("select-ban-payment");
+            selectOrder.innerHTML = ""; selectPay.innerHTML = `<option value="">-- Chọn bàn cần thanh toán --</option>`;
+            banan.forEach(ban => {
+                selectOrder.innerHTML += `<option value="${ban.id}">${ban.name} (${ban.status === 'trong' ? 'Trống' : 'Đang dùng'})</option>`;
+                if (ban.status !== 'trong') { selectPay.innerHTML += `<option value="${ban.id}">${ban.name} (Có hóa đơn)</option>`; }
+            });
+        }
+
+        function gotoOrder(banId) { document.getElementById("select-ban-order").value = banId; switchTab("tab-order"); }
+
+        function renderThucdon() {
+            const menu = document.getElementById("menu-items"); menu.innerHTML = "";
+            thucdon.forEach(item => {
+                menu.innerHTML += `
+                    <div class="bg-white border rounded-xl p-4 flex items-center justify-between hover:border-indigo-400 transition shadow-sm">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-lg bg-indigo-50 flex items-center justify-center text-indigo-600 text-lg"><i class="fa-solid ${item.icon}"></i></div>
+                            <div>
+                                <h4 class="font-bold text-sm text-slate-700">${item.name}</h4>
+                                <p class="text-xs text-slate-500 font-semibold">${item.price.toLocaleString('vi-VN')} VNĐ</p>
+                            </div>
+                        </div>
+                        <button onclick="addToCart(${item.id})" class="bg-indigo-50 text-indigo-600 hover:bg-indigo-600 hover:text-white font-bold p-2 rounded-lg transition"><i class="fa-solid fa-plus"></i></button>
+                    </div>`;
+            });
+        }
+
+        function addToCart(itemId) {
+            const mon = thucdon.find(i => i.id === itemId); const check = giogioi.find(i => i.id === itemId);
+            if (check) { check.quantity++; } else { giogioi.push({ ...mon, quantity: 1, note: "" }); }
+            renderCart();
+        }
+
+        function updateCartQty(itemId, change) {
+            const item = giogioi.find(i => i.id === itemId); item.quantity += change;
+            if (item.quantity <= 0) { giogioi = giogioi.filter(i => i.id !== itemId); }
+            renderCart();
+        }
+
+        function renderCart() {
+            const list = document.getElementById("cart-list"); const totalEl = document.getElementById("cart-total");
+            if (giogioi.length === 0) { list.innerHTML = `<p class="text-slate-400 text-center py-8">Chưa có món nào được chọn.</p>`; totalEl.innerText = "0 VNĐ"; return; }
+            list.innerHTML = ""; let total = 0;
+            giogioi.forEach(item => {
+                total += item.price * item.quantity;
+                list.innerHTML += `
+                    <div class="bg-white p-3 rounded-lg border flex flex-col gap-2">
+                        <div class="flex justify-between font-semibold text-slate-700"><span>${item.name}</span><span>${(item.price * item.quantity).toLocaleString('vi-VN')}đ</span></div>
+                        <div class="flex justify-between items-center text-xs">
+                            <input type="text" placeholder="Ghi chú..." onchange="updateNote(${item.id}, this.value)" value="${item.note}" class="border px-2 py-1 rounded w-3/5 text-slate-500 outline-none">
+                            <div class="flex items-center gap-2 border rounded-lg bg-slate-50 px-2 py-1">
+                                <button onclick="updateCartQty(${item.id}, -1)" class="hover:text-red-500"><i class="fa-solid fa-minus"></i></button>
+                                <span class="font-bold w-4 text-center">${item.quantity}</span>
+                                <button onclick="updateCartQty(${item.id}, 1)" class="hover:text-emerald-500"><i class="fa-solid fa-plus"></i></button>
+                            </div>
+                        </div>
+                    </div>`;
+            });
+            totalEl.innerText = total.toLocaleString('vi-VN') + " VNĐ";
+        }
+
+        function updateNote(itemId, val) { const item = giogioi.find(i => i.id === itemId); if (item) item.note = val; }
+
+        function submitOrder() {
+            if (giogioi.length === 0) { alert("Vui lòng chọn ít nhất một món!"); return; }
+            const banId = parseInt(document.getElementById("select-ban-order").value); const ban = banan.find(b => b.id === banId);
+            ban.order = [...ban.order, ...giogioi]; ban.status = "cho_bep";
+            bepList.push({ bepId: Date.now(), banId: banId, banName: ban.name, items: [...giogioi] });
+            giogioi = []; renderCart(); renderSodo(); populateBanSelect(); renderBep();
+            showToast(`Đã gửi yêu cầu của ${ban.name} xuống pha chế!`); switchTab("tab-sodo");
+        }
+
+        function renderBep() {
+            const list = document.getElementById("bep-list"); const badge = document.getElementById("badge-bep");
+            if (bepList.length === 0) { list.innerHTML = `<p class="text-slate-400 text-center py-12">Hiện tại quầy pha chế chưa nhận được yêu cầu nào.[cite: 6]</p>`; badge.classList.add("hidden"); return; }
+            badge.innerText = bepList.length; badge.classList.remove("hidden"); list.innerHTML = "";
+            bepList.forEach(item => {
+                let itemsText = item.items.map(i => `• <span class="font-semibold">${i.quantity} ly</span> ${i.name} ${i.note ? `<span class="text-indigo-600 font-mono italic">(${i.note})</span>` : ""}`).join("<br>");
+                list.innerHTML += `
+                    <div class="border border-amber-200 bg-amber-50/40 rounded-2xl p-5 flex flex-col md:flex-row justify-between md:items-center gap-4">
+                        <div>
+                            <div class="flex items-center gap-2 mb-2">
+                                <span class="bg-amber-500 text-white text-xs font-bold px-2.5 py-1 rounded-full"><i class="fa-solid fa-mug-hot mr-1"></i>Chờ xử lý</span>
+                                <h4 class="font-bold text-slate-700">${item.banName}</h4>
+                            </div>
+                            <div class="text-sm text-slate-600 space-y-1">${itemsText}</div>
+                        </div>
+                        <button onclick="finishPhaChe(${item.bepId})" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-5 py-3 rounded-xl text-sm shadow-sm transition"><i class="fa-solid fa-circle-check mr-1"></i> Báo Hoàn Thành</button>
+                    </div>`;
+            });
+        }
+
+        function finishPhaChe(bepId) {
+            const idx = bepList.findIndex(i => i.bepId === bepId); if (idx === -1) return;
+            const orderFinished = bepList[idx]; const ban = banan.find(b => b.id === orderFinished.banId);
+            ban.status = "co_khach"; bepList.splice(idx, 1);
+            renderSodo(); renderBep(); populateBanSelect();
+            showToast(`Pha chế xong cho ${ban.name}. Mời nhân viên chạy bàn mang đồ uống!`);
+        }
+
+        function gotoPay(banId) { document.getElementById("select-ban-payment").value = banId; switchTab("tab-thungan"); loadBillDetails(); }
+
+        let discountPercent = 0; let finalPay = 0;
+
+        function applyDiscount() {
+            const val = document.getElementById("input-voucher").value.toUpperCase();
+            if (val === "KM10") { discountPercent = 10; } else { discountPercent = 0; }
+            loadBillDetails(true);
+        }
+
+        // ĐIỀU KHIỂN ẨN HIỆN PHƯƠNG THỨC THANH TOÁN
+        function togglePaymentMethod(method) {
+            const cashContainer = document.getElementById("container-tien-mat");
+            const qrContainer = document.getElementById("container-ma-qr");
+
+            if (method === "cash") {
+                cashContainer.classList.remove("hidden");
+                qrContainer.classList.add("hidden");
+            } else if (method === "qr") {
+                cashContainer.classList.add("hidden");
+                qrContainer.classList.remove("hidden");
+                // Cập nhật giá tiền động lên mã QR để quét
+                document.getElementById("qr-pay-amount").innerText = finalPay.toLocaleString('vi-VN');
+            }
+        }
+
+        function loadBillDetails(isVoucherTrigger = false) {
+            const banId = parseInt(document.getElementById("select-ban-payment").value);
+            const detailContainer = document.getElementById("bill-details"); const btnPay = document.getElementById("btn-pay-confirm");
+            if (!banId) {
+                detailContainer.innerHTML = `<p class="text-slate-400 text-center py-8">Chọn bàn có khách ở bên trái để xem chi tiết hóa đơn.[cite: 6]</p>`;
+                btnPay.disabled = true; btnPay.className = "w-full bg-slate-400 text-white font-bold py-3.5 rounded-lg text-sm cursor-not-allowed"; return;
+            }
+            const ban = banan.find(b => b.id === banId); let billItemsText = ""; let subtotal = 0;
+            ban.order.forEach(item => {
+                subtotal += item.price * item.quantity;
+                billItemsText += `<div class="flex justify-between text-slate-600"><span>${item.name} x${item.quantity}</span><span>${(item.price * item.quantity).toLocaleString('vi-VN')} đ</span></div>`;
+            });
+            
+            if (!isVoucherTrigger) { 
+                document.getElementById("input-voucher").value = ""; 
+                document.getElementById("input-tien-khach").value = ""; 
+                document.getElementById("pay-cash").checked = true;
+                togglePaymentMethod("cash");
+                discountPercent = 0; 
+            }
+            
+            let discountAmount = subtotal * (discountPercent / 100); finalPay = subtotal - discountAmount;
+            
+            // Cập nhật số tiền động lên QR nếu đang tích chọn QR
+            if(document.getElementById("pay-qr").checked) {
+                document.getElementById("qr-pay-amount").innerText = finalPay.toLocaleString('vi-VN');
+            }
+
+            detailContainer.innerHTML = `
+                <div class="space-y-2 border-b border-dashed border-slate-300 pb-3"><div class="flex justify-between font-bold text-slate-700"><span>Vị trí:</span><span>${ban.name}</span></div>${billItemsText}</div>
+                <div class="space-y-1.5 pt-3">
+                    <div class="flex justify-between text-slate-500"><span>Tạm tính:</span><span>${subtotal.toLocaleString('vi-VN')} đ</span></div>
+                    <div class="flex justify-between text-slate-500"><span>Voucher giảm giá (${discountPercent}%):</span><span class="text-rose-500 font-bold">- ${discountAmount.toLocaleString('vi-VN')} đ</span></div>
+                    <div class="flex justify-between font-bold text-slate-800 text-base border-t pt-2 border-slate-200"><span>KHÁCH PHẢI TRẢ:</span><span class="text-indigo-600">${finalPay.toLocaleString('vi-VN')} VNĐ</span></div>
+                    <div id="div-tien-thua" class="flex justify-between font-semibold text-slate-500 pt-2 hidden"><span>Tiền thừa thối lại:</span><span id="label-tien-thua" class="text-emerald-600">0 VNĐ</span></div>
+                </div>`;
+            btnPay.disabled = false; btnPay.className = "w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3.5 rounded-lg text-sm shadow-md transition duration-200 cursor-pointer";
+        }
+
+        function calculateChange() {
+            const inputTien = parseFloat(document.getElementById("input-tien-khach").value);
+            const divThua = document.getElementById("div-tien-thua"); const labelThua = document.getElementById("label-tien-thua");
+            if (isNaN(inputTien) || inputTien < finalPay || document.getElementById("pay-qr").checked) { divThua.classList.add("hidden"); return; }
+            const change = inputTien - finalPay; labelThua.innerText = change.toLocaleString('vi-VN') + " VNĐ"; divThua.classList.remove("hidden");
+        }
+
+        function processPayment() {
+            const banId = parseInt(document.getElementById("select-ban-payment").value); const ban = banan.find(b => b.id === banId);
+            const phuongThuc = document.getElementById("pay-cash").checked ? "Tiền mặt" : "Chuyển khoản QR (Techcombank)";
+            
+            alert(`===============================\n      HOÁ ĐƠN CAFE (MOCKUP)   \n  Trường ĐH Phương Đông - Nhóm 1[cite: 7]\n===============================\nBàn ăn: ${ban.name}\nNhân viên lập: Nguyễn Mạnh Cường\nHình thức: ${phuongThuc}\n-------------------------------\n` + ban.order.map(i => `${i.name} (x${i.quantity}): ${(i.price*i.quantity).toLocaleString()}đ`).join('\n') + '\n-------------------------------\n' + `Khách phải trả: ${finalPay.toLocaleString('vi-VN')} VNĐ\nHệ thống: [Tự động trừ nguyên liệu kho] và [Đồng bộ doanh số Admin]\n===============================`);
+            ban.status = "trong"; ban.order = []; renderSodo(); populateBanSelect(); loadBillDetails();
+            showToast("Thanh toán hóa đơn và trừ định lượng tồn kho thành công!"); switchTab("tab-sodo");
+        }
+    </script>
+</body>
+</html>
